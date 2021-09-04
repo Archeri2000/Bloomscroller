@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bloomscrolling Options</title>
+    <style type="text/css">
+    
+        body {
+            background:white;
+            color:#385a7c;
+            font-size:1em;
+        }
+
+        body label, body select {
+            display:block;
+            margin:1em 0;
+        }
+
+        body p {
+            margin-top:1em;
+        }
+
+        body p ~ select {
+            margin-top:0;
+        }
+
+    </style>
+</head>
+<body>
+
+<p>Sports/Exercise:</p>
+<select id="hobby1">
+    <option value="football">Football</option>
+    <option value="basketball">Basketball</option>
+    <option value="swimming">Swimming</option>
+    <option value="badminton">Badminton</option>
+    <option value="golf">Golf</option>
+    <option value="volley">Volleyball</option>
+    <option value="table tennis">Table Tennis</option>
+    <option value="running">Running</option>
+    <option value="hiking">Hiking</option>
+    <option value="yoga">Yoga</option>
+    <option value="cycling">Cycling</option>
+    <option value="squash">Squash</option>
+</select>
+
+<p>Hobby:</p>
+<select id="hobby2">
+    <option value="reading">Reading</option>
+    <option value="chatting">Chatting</option>
+    <option value="cooking">Cooking</option>
+    <option value="baking">Baking</option>
+    <option value="gaming">Gaming</option>
+    <option value="arts and crafts">Arts & Crafts</option>
+    <option value="photography">Photography</option>
+    <option value="knitting">Knitting</option>
+    <option value="fishing">Fishing</option>
+    <option value="pottery">Pottery</option>
+    <option value="gardening">Gardening</option>
+    <option value="flower arrangement">Flower arranging</option>
+</select>
+
+<p>Good news site:</p>
+<select id="site">
+    <option value="gnn">Good News Network</option>
+    <option value="pn">Positive News</option>
+    <option value="od">Optimist Daily</option>
+    <option value="reddit">r/UpliftingNews</option>
+</select>
+
+<label>
+    <input type="checkbox" id="netflix">
+    <span>Netflix</span>
+</label>
+
+<div id="status"></div>
+<button id="save">Save</button>
+
+<script src="extOptions.js"></script>
+</body>
+</html>

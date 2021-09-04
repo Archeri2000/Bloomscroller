@@ -20,7 +20,7 @@
       "128": "/images/icon-128x128.png"
     }
   },
-  "options_page": "options.html",
+  "options_page": "./extOptions.html",
   "permissions": [
     "storage",
     "activeTab",

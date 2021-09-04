@@ -1,9 +1,9 @@
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.local.set({
-        newsSite: "",
+        newsSite: "gnn",
         netFlix: true,
-        mySport: "",
-        myHobby: ""
+        mySport: "football",
+        myHobby: "reading"
     });
 });
 

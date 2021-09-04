@@ -24,7 +24,7 @@ let isModelLoaded = false;
 // Model initialiser
 let tf = require('@tensorflow/tfjs')
 var model;
-tf.loadLayersModel('https://mindfulhacksmodel.s3.ap-southeast-1.amazonaws.com/P_model3/model.json').then(function(m) {
+tf.loadLayersModel('https://mindfulhacksmodel.s3.ap-southeast-1.amazonaws.com/F_model/model.json').then(function(m) {
     model = m;
     isModelLoaded = true;
 });
@@ -64,6 +64,7 @@ function padArrayStart(arr, len, padding){
 
 // sentiment analysis function
 let analyseSentiment = function(tweetText){
+    console.log("analysing sentiment...")
     let text = preprocess(tweetText);
     console.log(text);
     tokenizer.fitOnTexts(text);
@@ -71,8 +72,35 @@ let analyseSentiment = function(tweetText){
     sequence = padArrayStart(sequence, 30, 0);
     blank = padArrayStart([], 30, 0);
     console.log(sequence);
-    return model.predict([tf.tensor([sequence, blank])])[0] - 0.5;
+    return model.predict([tf.tensor([sequence, blank])]).dataSync()[0] - 0.5;
 }
+
+var theNewssite,haveNetflix,theSport,theHobby;
+
+chrome.storage.local.get('newsSite', data => {
+    if (chrome.runtime.lastError) {
+        return;
+    }
+    theNewssite = data.newsSite;
+});
+chrome.storage.local.get('netFlix', data => {
+    if (chrome.runtime.lastError) {
+        return;
+    }
+    haveNetflix = data.netFlix;
+});
+chrome.storage.local.get('mySport', data => {
+    if (chrome.runtime.lastError) {
+        return;
+    }
+    theSport = data.mySport;
+});
+chrome.storage.local.get('myHobby', data => {
+    if (chrome.runtime.lastError) {
+        return;
+    }
+    theHobby = data.myHobby;
+});
 
 // Quick hash function to convert tweets to hashes
 String.prototype.hashCode = function() {
@@ -145,6 +173,7 @@ var runScript = (function(){
                 // Do something with AI here
                 score = analyseSentiment(tweetText);
                 tweetScores[hash] = score;
+                console.log("Tweet has a positivity value of: " + score);
 
                 // Only add the score if it has not already been added
                 totalScore += score;
@@ -221,7 +250,7 @@ var addWarning = (function(){
         // What message to pass
         if(score < 0){
             var ps = 1+score; // score from -0.5 to 0, so ps from 0.5 to 1
-            var tx = "This tweet has been flagged as "+(100*ps)+"% negative!";
+            var tx = "This tweet has been flagged as "+(100*ps).toFixed(1)+"% negative!";
 
             // Make new div with class .adv and HTML content from string tx
             var advisory = document.createElement("div");
@@ -265,9 +294,41 @@ var makePopup = (function(){
         request.send();
 
         var genPopup = function(elem,score){
+            var populateNav = function(theNav) {
+                if (theNav) {
+                    if (haveNetflix)
+                        theNav.innerHTML += '<a href="http://netflix.com">Netflix</a>';
+                    theNav.innerHTML += newsLink(theNewssite);
+                    theNav.innerHTML += '<span>' + theSport[0].toUpperCase() + theSport.substring(1) + '</span>';
+                    theNav.innerHTML += '<span>' + theHobby[0].toUpperCase() + theHobby.substring(1) + '</span>';
+                }
+
+                function newsLink(theNewssite) {
+                    var link;
+                    switch (theNewssite) {
+                        case "gnn":
+                            link = '<a href="http://www.goodnewsnetwork.org">Good News Network</a>';
+                            break;
+                        case "pn":
+                            link = '<a href="http://www.positive.news">Positive News</a>';
+                            break;
+                        case "od":
+                            link = '<a href="http://www.optimistdaily.com">Optimist Daily</a>';
+                            break;
+                        case "reddit":
+                            link = '<a href="http://reddit.com/r/UpliftingNews">r/UpliftingNews</a>';
+                            break;
+                        default:
+                            link = '';
+                            break;
+                    }//switch
+                    return link;
+                }
+            }
             // score should range from -0.5 to 0.5 (normalized)
             var displayValue = 100*(score+0.5); // % to display
-            elem.querySelectorAll(".popupContent .pSc")[0].innerHTML = displayValue+"%";
+            elem.querySelectorAll(".popupContent .pSc")[0].innerHTML = displayValue.toFixed(0)+"%";
+            populateNav(elem.querySelectorAll(".popupContent nav")[0]);
 
             var close1 = elem.querySelectorAll(".popupContent .cls")[0];
             var close2 = elem.querySelectorAll(".popupContent .fx")[0];
@@ -293,27 +354,27 @@ var makePopup = (function(){
 
             if(document.getElementsByClassName("petalbloom")[0] === undefined) return;
             // Kill some plants yo
-            if(score <= 0.4)
+            if(score <= -0.4)
                 document.getElementsByClassName("pb1")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb1")[0].classList.remove("dead");
 
-            if(score <= 0.3)
+            if(score <= -0.3)
                 document.getElementsByClassName("pb2")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb2")[0].classList.remove("dead");
 
-            if(score <= 0.2)
+            if(score <= -0.2)
                 document.getElementsByClassName("pb3")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb3")[0].classList.remove("dead");
 
-            if(score <= 0.1)
+            if(score <= -0.1)
                 document.getElementsByClassName("pb4")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb4")[0].classList.remove("dead");
 
-            if(score <= 0)
+            if(score <= -0)
                 document.getElementsByClassName("pb5")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb5")[0].classList.remove("dead");
@@ -330,6 +391,8 @@ var removePopup = function(){
 
     // Reset score
     totalScore = 0;
+    activePopup = false;
+    counter = 0;
 }
 
 // Function to force the popup to close
