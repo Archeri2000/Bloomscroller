@@ -8,7 +8,7 @@ Currently compatible with Twitter on desktop.
 
 # Getting Started
 
-This project requires npm and Browserify to pack the dependencies into a single package.
+This project requires npm and Browserify to pack the dependencies into a single package. Navigate to the directory of your local git repository and run the following command to install all needed dependencies to build the project.
 
 ```bash
 $ npm install
