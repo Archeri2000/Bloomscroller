@@ -1,0 +1,10 @@
+{
+  "name": "MindfulHacks",
+  "version": "1.0.0",
+  "dependencies": {
+    "browserify": "^17.0.0"
+  },
+  "devDependencies": {
+    "snowball-stemmer.jsx": "^0.2.3"
+  }
+}
