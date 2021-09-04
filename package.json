@@ -2,7 +2,10 @@
   "name": "MindfulHacks",
   "version": "1.0.0",
   "dependencies": {
-    "browserify": "^17.0.0"
+    "@tensorflow/tfjs": "^3.9.0",
+    "browserify": "^17.0.0",
+    "snowball": "^0.3.1",
+    "tf_node_tokenizer": "^1.0.3"
   },
   "devDependencies": {
     "snowball-stemmer.jsx": "^0.2.3"
