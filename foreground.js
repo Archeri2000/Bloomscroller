@@ -249,7 +249,10 @@ var addWarning = (function(){
 
         // What message to pass
         if(score < 0){
-            var ps = 1+score; // score from -0.5 to 0, so ps from 0.5 to 1
+            // score range [-0.5,0.5]
+            // negative is -0.5 which should show 100%
+            // so the formula is 1-(score+0.5) = 0.5-score
+            var ps = 0.5-score;
             var tx = "This tweet has been flagged as "+(100*ps).toFixed(1)+"% negative!";
 
             // Make new div with class .adv and HTML content from string tx
@@ -326,7 +329,9 @@ var makePopup = (function(){
                 }
             }
             // score should range from -0.5 to 0.5 (normalized)
-            var displayValue = 100*(score+0.5); // % to display
+            // lower is worse, if 100% turn off
+            // go back to [0, 1] then subtract
+            var displayValue = 100*(1-(score+0.5)); // % to display
             elem.querySelectorAll(".popupContent .pSc")[0].innerHTML = displayValue.toFixed(0)+"%";
             populateNav(elem.querySelectorAll(".popupContent nav")[0]);
 
@@ -378,9 +383,26 @@ var makePopup = (function(){
                 document.getElementsByClassName("pb5")[0].classList.add("dead");
             else
                 document.getElementsByClassName("pb5")[0].classList.remove("dead");
+
+            regenPetals(Object.keys(tweetScores).length);
         }
     }
 })();
+
+// Function to regen petals over time
+var tHnd; // global so that I can turn it off elsewhere
+
+var regenPetals = function(howManyTweetsNow){
+    // Timer is set to regen a petal every 12 seconds
+    tHnd = setInterval(function(){
+        // But stop regen once the totalScore > 0 (all petals are alive)
+        if(totalScore > 0)
+            clearInterval(tHnd); 
+        // And only regen if user has not seen more tweets since previous scan
+        if (Object.keys(tweetScores).length == howManyTweetsNow)
+            totalScore += 0.1*(Object.keys(tweetScores).length);
+    },12000);
+}
 
 // Function to remove the popup gently and reset the score
 var removePopup = function(){
@@ -409,6 +431,9 @@ var forceClosePopup = function(){
     activePopup = setTimeout(function(){
         return true;
     }, 10000)
+
+    // Stop petals from regenerating
+    clearInterval(tHnd);
 }
 
 var loadCss = function(){

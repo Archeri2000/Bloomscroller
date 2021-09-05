@@ -229,7 +229,7 @@ html.alertedPopup {
 }
 
 .dead {
-    background-color: rgba(0,0,0,0.3)!important; 
+    background-color: var(--petalb)!important; 
     filter: blur(2px)!important;
 }
 
