@@ -359,35 +359,39 @@ var makePopup = (function(){
 
             if(document.getElementsByClassName("petalbloom")[0] === undefined) return;
             // Kill some plants yo
-            if(score <= -0.4)
-                document.getElementsByClassName("pb1")[0].classList.add("dead");
-            else
-                document.getElementsByClassName("pb1")[0].classList.remove("dead");
-
-            if(score <= -0.3)
-                document.getElementsByClassName("pb2")[0].classList.add("dead");
-            else
-                document.getElementsByClassName("pb2")[0].classList.remove("dead");
-
-            if(score <= -0.2)
-                document.getElementsByClassName("pb3")[0].classList.add("dead");
-            else
-                document.getElementsByClassName("pb3")[0].classList.remove("dead");
-
-            if(score <= -0.1)
-                document.getElementsByClassName("pb4")[0].classList.add("dead");
-            else
-                document.getElementsByClassName("pb4")[0].classList.remove("dead");
-
-            if(score <= -0)
-                document.getElementsByClassName("pb5")[0].classList.add("dead");
-            else
-                document.getElementsByClassName("pb5")[0].classList.remove("dead");
-
+            killFlower(score);
             regenPetals(Object.keys(tweetScores).length);
         }
     }
 })();
+
+// Function to kill the plants
+var killFlower = function(score){
+    if(score <= -0.4)
+        document.getElementsByClassName("pb1")[0].classList.add("dead");
+    else
+        document.getElementsByClassName("pb1")[0].classList.remove("dead");
+
+    if(score <= -0.3)
+        document.getElementsByClassName("pb2")[0].classList.add("dead");
+    else
+        document.getElementsByClassName("pb2")[0].classList.remove("dead");
+
+    if(score <= -0.2)
+        document.getElementsByClassName("pb3")[0].classList.add("dead");
+    else
+        document.getElementsByClassName("pb3")[0].classList.remove("dead");
+
+    if(score <= -0.1)
+        document.getElementsByClassName("pb4")[0].classList.add("dead");
+    else
+        document.getElementsByClassName("pb4")[0].classList.remove("dead");
+
+    if(score <= -0)
+        document.getElementsByClassName("pb5")[0].classList.add("dead");
+    else
+        document.getElementsByClassName("pb5")[0].classList.remove("dead");
+}
 
 // Function to regen petals over time
 var tHnd; // global so that I can turn it off elsewhere
@@ -401,6 +405,8 @@ var regenPetals = function(howManyTweetsNow){
         // And only regen if user has not seen more tweets since previous scan
         if (Object.keys(tweetScores).length == howManyTweetsNow)
             totalScore += 0.1*(Object.keys(tweetScores).length);
+        // Refresh the flower's state
+        killFlower(totalScore/Object.keys(tweetScores).length);
     },12000);
 }
 
